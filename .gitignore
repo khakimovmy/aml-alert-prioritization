@@ -1,0 +1,30 @@
+# PyCharm
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Raw competition data — do NOT upload
+data/
+
+# Generated outputs
+outputs/
+
+# Jupyter temporary files
+.ipynb_checkpoints/
+
+# Model-generated files
+notebooks/catboost_info/
+
+# Old / experimental work
+notebooks/01_eda.ipynb
+notebooks/team_5B7B633C.csv
+scripts/
+main.py
+
+# OS files
+.DS_Store
+Thumbs.db

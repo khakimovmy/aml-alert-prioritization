@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AML Alert Prioritization | Team 5B7B633C</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #f0f1f3;
+            --panel: #ffffff;
+            --panel-2: #faf7f4;
+            --text: #1c1c1e;
+            --muted: #7a7f8a;
+            --accent: #ff5a1f;
+            --accent-2: #8a0e0e;
+            --border: #ececef;
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --sidebar-w: 260px;
+            --shadow: 0 10px 30px rgba(20, 10, 5, 0.06);
+            --shadow-lg: 0 24px 60px rgba(20, 10, 5, 0.14);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', 'Product Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { font-family: inherit; }
+
+        .shell {
+            display: flex;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        /* ---------- Sidebar ---------- */
+
+        .sidebar {
+            width: var(--sidebar-w);
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            border-right: 1px solid var(--border);
+        }
+
+        .brand-mark {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-mark .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 15px;
+        }
+
+        .brand-mark .brand {
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: -0.01em;
+            color: var(--text);
+        }
+
+        .brand-mark .brand small {
+            display: block;
+            font-weight: 500;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            font-weight: 600;
+            margin: 0 0 8px 14px;
+        }
+
+        .links a {
+            position: relative;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 14px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .links a::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .links a:hover {
+            color: var(--text);
+            background: var(--panel-2);
+        }
+
+        .links a:hover::before {
+            background: var(--accent);
+            transform: scale(1.3);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            font-size: 12px;
+            color: var(--muted);
+            padding: 0 14px;
+        }
+
+        .menu-toggle {
+            display: none;
+        }
+
+        /* ---------- Main content ---------- */
+
+        main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .container {
+            width: min(980px, 92%);
+            margin: auto;
+        }
+
+        header {
+            padding: 72px 0 60px;
+        }
+
+        .hero-row {
+            display: grid;
+            grid-template-columns: 1.3fr 0.9fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .eyebrow {
+            color: var(--accent-2);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--panel-2);
+            padding: 6px 14px;
+            border-radius: 999px;
+        }
+
+        h1 {
+            font-size: clamp(36px, 5vw, 56px);
+            line-height: 1.08;
+            margin: 18px 0 18px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        h2 {
+            margin: 0 0 6px;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+
+        h3 {
+            margin-top: 0;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .lead {
+            max-width: 520px;
+            font-size: 17px;
+            color: var(--muted);
+        }
+
+        /* floating spotlight card, echoes a bank-card widget */
+        .spotlight-card {
+            position: relative;
+            background: linear-gradient(150deg, var(--accent-2) 0%, var(--accent) 100%);
+            border-radius: var(--radius-lg);
+            padding: 30px 26px;
+            color: #fff8f4;
+            box-shadow: var(--shadow-lg);
+            transform: rotate(1.5deg);
+        }
+
+        .spotlight-card .dots {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 22px;
+        }
+
+        .spotlight-card .dots span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.55);
+        }
+
+        .spotlight-card .tag {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 600;
+        }
+
+        .spotlight-card .value {
+            font-size: 40px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin: 6px 0 14px;
+        }
+
+        .spotlight-card .value span {
+            font-size: 20px;
+            font-weight: 600;
+            opacity: 0.85;
+        }
+
+        .spotlight-card .pill {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.18);
+            padding: 6px 12px;
+            border-radius: 999px;
+        }
+
+        /* ---------- Sections ---------- */
+
+        section {
+            padding: 52px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .section-head {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+
+        .section-num {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .section-intro {
+            color: var(--muted);
+            max-width: 720px;
+            margin: 10px 0 32px;
+        }
+
+        /* ---------- Bento grid ---------- */
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card--accent {
+            background: linear-gradient(150deg, var(--accent-2), var(--accent));
+            color: #fff8f4;
+            border: none;
+        }
+
+        .card--accent .metric-label,
+        .card--accent h3 {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .card--accent .metric {
+            color: #ffffff;
+        }
+
+        .card--wide {
+            grid-column: span 2;
+        }
+
+        .card-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: var(--panel-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent-2);
+            margin-bottom: 14px;
+        }
+
+        .card--accent .card-icon {
+            background: rgba(255, 255, 255, 0.18);
+            color: #fff;
+        }
+
+        .metric {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }
+
+        .metric-label {
+            color: var(--muted);
+            font-size: 13.5px;
+            margin-top: 4px;
+        }
+
+        .highlight {
+            color: var(--accent-2);
+        }
+
+        .blue {
+            color: var(--accent-2);
+        }
+
+        /* ---------- Table ---------- */
+
+        .table-wrap {
+            background: var(--panel);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px 18px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+            background: var(--panel-2);
+        }
+
+        td {
+            color: var(--text);
+            font-size: 14.5px;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover td {
+            background: var(--panel-2);
+        }
+
+        /* ---------- Bars ---------- */
+
+        .chart {
+            margin-top: 22px;
+            padding: 26px;
+            background: var(--panel);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow);
+        }
+
+        .bar-row {
+            display: grid;
+            grid-template-columns: 150px 1fr 64px;
+            align-items: center;
+            gap: 14px;
+            margin: 16px 0;
+            font-size: 13.5px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .bar-bg {
+            height: 10px;
+            background: var(--panel-2);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            border-radius: 20px;
+            background: linear-gradient(90deg, var(--accent-2), var(--accent));
+        }
+
+        /* ---------- Notes ---------- */
+
+        .note {
+            margin-top: 20px;
+            padding: 18px 22px;
+            background: var(--panel-2);
+            color: var(--text);
+            border-radius: var(--radius-md);
+            font-size: 14.5px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .note::before {
+            content: "i";
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            font-style: normal;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+        }
+
+        code {
+            color: var(--accent-2);
+            background: #fff;
+            border: 1px solid var(--border);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        footer {
+            padding: 40px 0 60px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13.5px;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                transform: translateX(-100%);
+                background: var(--bg);
+                z-index: 30;
+                box-shadow: var(--shadow-lg);
+                transition: transform 0.25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .menu-toggle {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                position: sticky;
+                top: 0;
+                z-index: 20;
+                background: rgba(240, 241, 243, 0.9);
+                backdrop-filter: blur(10px);
+                padding: 16px 5%;
+                border-bottom: 1px solid var(--border);
+                font-weight: 700;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            .menu-toggle .logo {
+                width: 30px;
+                height: 30px;
+                border-radius: 9px;
+                background: linear-gradient(135deg, var(--accent-2), var(--accent));
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                font-weight: 800;
+            }
+
+            .hero-row {
+                grid-template-columns: 1fr;
+            }
+
+            .spotlight-card {
+                transform: none;
+                max-width: 320px;
+            }
+
+            .card--wide {
+                grid-column: span 1;
+            }
+
+            .bar-row {
+                grid-template-columns: 110px 1fr 54px;
+                font-size: 12.5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="shell">
+
+    <div class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+        <div class="logo">5B</div>
+        Team 5B7B633C — menu
+    </div>
+
+    <aside class="sidebar">
+        <div class="brand-mark">
+            <div class="logo">5B</div>
+            <div class="brand">
+                Team 5B7B633C
+                <small>AML Alert Prioritization</small>
+            </div>
+        </div>
+
+        <nav>
+            <div class="nav-label">Sections</div>
+            <div class="links">
+                <a href="#data">Data</a>
+                <a href="#eda">EDA</a>
+                <a href="#features">Features</a>
+                <a href="#validation">Validation</a>
+                <a href="#model">Model</a>
+                <a href="#conclusion">Conclusion</a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            WIUT FinTech / AI in Finance Hackathon
+        </div>
+    </aside>
+
+    <main>
+
+        <header>
+            <div class="container">
+                <div class="hero-row">
+                    <div>
+                        <span class="eyebrow">WIUT FinTech · AI in Finance Hackathon</span>
+
+                        <h1>
+                            AML Alert Prioritization
+                        </h1>
+
+                        <p class="lead">
+                            A leakage-aware machine learning pipeline for estimating the
+                            probability that an Anti-Money Laundering alert will be escalated,
+                            using historical transaction behaviour associated with each alert.
+                        </p>
+                    </div>
+
+                    <div class="spotlight-card">
+                        <div class="dots"><span></span><span></span><span></span></div>
+                        <div class="tag">Mean chronological ROC-AUC</div>
+                        <div class="value">0.65<span>65</span></div>
+                        <div class="pill">Ensemble of 3 models</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+
+        <section id="data">
+            <div class="container">
+
+                <div class="section-head">
+                    <span class="section-num">01</span>
+                    <h2>Dataset Structure</h2>
+                </div>
+
+                <p class="section-intro">
+                    The dataset contains alert-level tables and transaction-level
+                    histories. Each transaction is linked to an alert through
+                    <code>signal_id</code>.
+                </p>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <div class="card-icon">A</div>
+                        <div class="metric">14,000</div>
+                        <div class="metric-label">Training alerts</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">A</div>
+                        <div class="metric">6,000</div>
+                        <div class="metric-label">Test alerts</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">T</div>
+                        <div class="metric">6.99M</div>
+                        <div class="metric-label">Raw training transactions</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">T</div>
+                        <div class="metric">3.03M</div>
+                        <div class="metric-label">Raw test transactions</div>
+                    </div>
+
+                </div>
+
+                <div style="margin-top:26px;" class="table-wrap">
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Field</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>signal_id</td>
+                                    <td>Unique AML alert identifier</td>
+                                </tr>
+
+                                <tr>
+                                    <td>signal_sanasi</td>
+                                    <td>Date associated with the AML alert</td>
+                                </tr>
+
+                                <tr>
+                                    <td>eskalatsiya</td>
+                                    <td>Binary escalation target available for training alerts</td>
+                                </tr>
+
+                                <tr>
+                                    <td>tranzaksiya_vaqti</td>
+                                    <td>Transaction timestamp</td>
+                                </tr>
+
+                                <tr>
+                                    <td>kirim_chiqim</td>
+                                    <td>Incoming or outgoing transaction direction</td>
+                                </tr>
+
+                                <tr>
+                                    <td>tranzaksiya_turi</td>
+                                    <td>Transaction type</td>
+                                </tr>
+
+                                <tr>
+                                    <td>miqdor_indeksi</td>
+                                    <td>Transaction amount index</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <section id="eda">
+            <div class="container">
+
+                <div class="section-head">
+                    <span class="section-num">02</span>
+                    <h2>Exploratory Data Analysis</h2>
+                </div>
+
+                <p class="section-intro">
+                    EDA was used both to understand alert behaviour and to motivate
+                    the feature engineering and validation strategy.
+                </p>
+
+
+                <h3>Target Distribution</h3>
+
+                <div class="chart">
+
+                    <div class="bar-row">
+                        <div>Not escalated</div>
+                        <div class="bar-bg">
+                            <div class="bar" style="width:82.82%"></div>
+                        </div>
+                        <div>82.82%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div>Escalated</div>
+                        <div class="bar-bg">
+                            <div class="bar" style="width:17.18%"></div>
+                        </div>
+                        <div>17.18%</div>
+                    </div>
+
+                </div>
+
+                <div class="note">
+                    Only about <strong>17.18%</strong> of training alerts are escalated.
+                    The target is therefore imbalanced, which motivated class weighting
+                    during model training and ROC-AUC as the evaluation metric.
+                </div>
+
+
+                <h3 style="margin-top:44px;">
+                    Transaction Activity by Target
+                </h3>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <div class="metric">494</div>
+                        <div class="metric-label">
+                            Mean transactions — not escalated
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="metric">524</div>
+                        <div class="metric-label">
+                            Mean transactions — escalated
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="metric">455</div>
+                        <div class="metric-label">
+                            Median transactions — not escalated
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="metric">493</div>
+                        <div class="metric-label">
+                            Median transactions — escalated
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="note">
+                    Escalated alerts show moderately higher transaction activity.
+                    This supports using transaction-count and recent-activity features,
+                    while the overlap between groups suggests that volume alone is not
+                    sufficient for prioritization.
+                </div>
+
+
+                <h3 style="margin-top:44px;">
+                    Transaction Direction
+                </h3>
+
+                <div class="chart">
+
+                    <div class="bar-row">
+                        <div>Incoming — class 0</div>
+                        <div class="bar-bg">
+                            <div class="bar" style="width:75.74%"></div>
+                        </div>
+                        <div>75.74%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div>Incoming — class 1</div>
+                        <div class="bar-bg">
+                            <div class="bar" style="width:75.29%"></div>
+                        </div>
+                        <div>75.29%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div>Outgoing — class 0</div>
+                        <div class="bar-bg">
+                            <div class="bar" style="width:24.26%"></div>
+                        </div>
+                        <div>24.26%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div>Outgoing — class 1</div>
+                        <div class="bar-bg">
+                            <div class="bar" style="width:24.71%"></div>
+                        </div>
+                        <div>24.71%</div>
+                    </div>
+
+                </div>
+
+                <div class="note">
+                    Direction proportions are very similar across target classes.
+                    Therefore, raw incoming/outgoing proportions are unlikely to be
+                    strong predictors on their own and are combined with amount,
+                    frequency, recency, and transaction-type information.
+                </div>
+
+
+                <h3 style="margin-top:44px;">
+                    Transaction Types
+                </h3>
+
+                <div class="table-wrap">
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Transaction Type</th>
+                                    <th>Not Escalated</th>
+                                    <th>Escalated</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>Card</td>
+                                    <td>53.81%</td>
+                                    <td>53.70%</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Bank transfer</td>
+                                    <td>39.44%</td>
+                                    <td>39.33%</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Cash</td>
+                                    <td>6.29%</td>
+                                    <td>6.50%</td>
+                                </tr>
+
+                                <tr>
+                                    <td>International</td>
+                                    <td>0.45%</td>
+                                    <td>0.47%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="note">
+                    Overall transaction-type shares also differ only modestly between
+                    the target classes. This motivated conditional statistics that
+                    describe amounts within specific transaction behaviours rather
+                    than relying only on category counts.
+                </div>
+
+
+                <h3 style="margin-top:44px;">
+                    Temporal Behaviour
+                </h3>
+
+                <p class="section-intro" style="margin-bottom:0;">
+                    Monthly escalation rates vary over the 2025–2026 period rather than
+                    remaining perfectly constant. Because the task has a meaningful
+                    time dimension, random cross-validation could provide an overly
+                    optimistic estimate of generalization.
+                </p>
+
+                <div class="note">
+                    This observation motivated a <strong>chronological validation
+                    strategy</strong>: models are trained on earlier alerts and
+                    evaluated on later periods.
+                </div>
+
+            </div>
+        </section>
+
+
+        <section id="features">
+            <div class="container">
+
+                <div class="section-head">
+                    <span class="section-num">03</span>
+                    <h2>Feature Engineering</h2>
+                </div>
+
+                <p class="section-intro">
+                    Millions of transaction rows are aggregated into one behavioural
+                    feature vector for each AML alert.
+                </p>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <div class="card-icon">V</div>
+                        <h3 class="highlight">Volume</h3>
+                        <p>
+                            Total transaction counts, incoming/outgoing counts,
+                            transaction-type counts, and recent transaction counts.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">A</div>
+                        <h3 class="highlight">Amount</h3>
+                        <p>
+                            Mean, median, minimum, maximum, and standard deviation of
+                            transaction amount indices.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">R</div>
+                        <h3 class="highlight">Recency</h3>
+                        <p>
+                            Activity within 1-day, 7-day, 30-day, and 90-day windows
+                            before each alert.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">T</div>
+                        <h3 class="highlight">Timing</h3>
+                        <p>
+                            Transaction-hour behaviour plus night-time and weekend
+                            activity.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">C</div>
+                        <h3 class="highlight">Conditional Behaviour</h3>
+                        <p>
+                            Amount statistics for card, bank-transfer, cash, and
+                            outgoing transactions.
+                        </p>
+                    </div>
+
+                    <div class="card card--accent">
+                        <div class="card-icon">Σ</div>
+                        <h3>Final Matrix</h3>
+                        <div class="metric">53</div>
+                        <div class="metric-label">
+                            engineered alert-level features
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <section>
+            <div class="container">
+
+                <div class="section-head">
+                    <span class="section-num">04</span>
+                    <h2>Temporal Leakage Control</h2>
+                </div>
+
+                <p class="section-intro">
+                    AML prediction must use information available at the time of the
+                    alert. Transactions occurring after the alert could reveal future
+                    information and artificially inflate validation performance.
+                </p>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <div class="metric">840</div>
+                        <div class="metric-label">
+                            post-alert training transactions removed
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="metric">21</div>
+                        <div class="metric-label">
+                            affected training alerts
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="metric">51</div>
+                        <div class="metric-label">
+                            post-alert test transactions removed
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="metric">2</div>
+                        <div class="metric-label">
+                            affected test alerts
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="note">
+                    Every feature is calculated only from transactions satisfying
+                    <code>tranzaksiya_vaqti &lt;= signal_sanasi</code>.
+                    After filtering, the pipeline verifies that no post-alert
+                    transactions remain.
+                </div>
+
+            </div>
+        </section>
+
+
+        <section id="validation">
+            <div class="container">
+
+                <div class="section-head">
+                    <span class="section-num">05</span>
+                    <h2>Chronological Validation</h2>
+                </div>
+
+                <p class="section-intro">
+                    Four forward-looking validation periods were used. Each validation
+                    period occurs after the data used for model training.
+                </p>
+
+                <div class="table-wrap">
+                    <div style="overflow-x:auto;">
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>Fold</th>
+                                    <th>Training Rows</th>
+                                    <th>Validation Rows</th>
+                                    <th>Ensemble ROC-AUC</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>9,837</td>
+                                    <td>1,243</td>
+                                    <td>0.643275</td>
+                                </tr>
+
+                                <tr>
+                                    <td>2</td>
+                                    <td>11,080</td>
+                                    <td>1,159</td>
+                                    <td>0.647444</td>
+                                </tr>
+
+                                <tr>
+                                    <td>3</td>
+                                    <td>12,239</td>
+                                    <td>716</td>
+                                    <td>0.659831</td>
+                                </tr>
+
+                                <tr>
+                                    <td>4</td>
+                                    <td>12,955</td>
+                                    <td>1,045</td>
+                                    <td>0.675528</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
+                <div class="grid" style="margin-top:22px;">
+
+                    <div class="card">
+                        <div class="metric">0.656520</div>
+                        <div class="metric-label">
+                            Mean chronological ROC-AUC
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="metric">0.01255</div>
+                        <div class="metric-label">
+                            Fold ROC-AUC standard deviation
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="note">
+                    These values are validation results, not hidden-test scores.
+                </div>
+
+            </div>
+        </section>
+
+
+        <section id="model">
+            <div class="container">
+
+                <div class="section-head">
+                    <span class="section-num">06</span>
+                    <h2>Final Model</h2>
+                </div>
+
+                <p class="section-intro">
+                    The selected prediction architecture is an ensemble of three
+                    shallow, regularized XGBoost models trained on the same 53-feature
+                    alert representation.
+                </p>
+
+                <div class="grid">
+
+                    <div class="card card--accent">
+                        <h3>Model A</h3>
+                        <div class="metric">50%</div>
+                        <p>
+                            Depth 3<br>
+                            Min child weight 10<br>
+                            L2 regularization 5
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Model B</h3>
+                        <div class="metric">25%</div>
+                        <p>
+                            Depth 3<br>
+                            Min child weight 20<br>
+                            L2 regularization 1
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Model C</h3>
+                        <div class="metric">25%</div>
+                        <p>
+                            Depth 3<br>
+                            Min child weight 5<br>
+                            L2 regularization 5
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="note">
+                    Class weighting is calculated from the training data to account for
+                    the imbalanced escalation target. The final models are trained on
+                    all 14,000 training alerts after the architecture is selected using
+                    chronological validation.
+                </div>
+
+            </div>
+        </section>
+
+
+        <section id="conclusion">
+            <div class="container">
+
+                <div class="section-head">
+                    <span class="section-num">07</span>
+                    <h2>Key Findings</h2>
+                </div>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <div class="card-icon">01</div>
+                        <h3 class="blue">Activity Matters</h3>
+                        <p>
+                            Escalated alerts have moderately higher transaction
+                            activity, but substantial overlap remains between classes.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">02</div>
+                        <h3 class="blue">Simple Shares Are Not Enough</h3>
+                        <p>
+                            Direction and transaction-type proportions are similar
+                            across classes, motivating richer behavioural statistics.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">03</div>
+                        <h3 class="blue">Time Matters</h3>
+                        <p>
+                            Escalation behaviour varies over time, supporting
+                            chronological rather than random validation.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">04</div>
+                        <h3 class="blue">Leakage Control Matters</h3>
+                        <p>
+                            Post-alert transactions must be excluded so that features
+                            reflect information available when an alert occurs.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="note">
+                    The final system combines leakage-safe transaction aggregation,
+                    explicit ID alignment, chronological validation, and a regularized
+                    gradient-boosting ensemble to prioritize AML alerts.
+                </div>
+
+            </div>
+        </section>
+
+
+        <footer>
+            <div class="container">
+                AML Alert Prioritization · Team 5B7B633C ·
+                WIUT FinTech / AI in Finance Hackathon
+            </div>
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>
