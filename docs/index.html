@@ -633,8 +633,8 @@
                     <div class="spotlight-card">
                         <div class="dots"><span></span><span></span><span></span></div>
                         <div class="tag">Mean chronological ROC-AUC</div>
-                        <div class="value">0.65<span>65</span></div>
-                        <div class="pill">Ensemble of 3 models</div>
+                        <div class="value">0.66<span>27</span></div>
+                        <div class="pill">5-seed LightGBM ensemble</div>
                     </div>
                 </div>
             </div>
@@ -775,8 +775,8 @@
 
                 <div class="note">
                     Only about <strong>17.18%</strong> of training alerts are escalated.
-                    The target is therefore imbalanced, which motivated class weighting
-                    during model training and ROC-AUC as the evaluation metric.
+                     The target is therefore imbalanced, making ROC-AUC an appropriate
+                     ranking metric for model evaluation.
                 </div>
 
 
@@ -1108,28 +1108,28 @@
                                     <td>1</td>
                                     <td>9,837</td>
                                     <td>1,243</td>
-                                    <td>0.643275</td>
+                                    <td>0.647025</td>
                                 </tr>
 
                                 <tr>
                                     <td>2</td>
                                     <td>11,080</td>
                                     <td>1,159</td>
-                                    <td>0.647444</td>
+                                    <td>0.655730</td>
                                 </tr>
 
                                 <tr>
                                     <td>3</td>
                                     <td>12,239</td>
                                     <td>716</td>
-                                    <td>0.659831</td>
+                                    <td>0.668359</td>
                                 </tr>
 
                                 <tr>
                                     <td>4</td>
                                     <td>12,955</td>
                                     <td>1,045</td>
-                                    <td>0.675528</td>
+                                    <td>0.679796</td>
                                 </tr>
                             </tbody>
 
@@ -1140,14 +1140,14 @@
                 <div class="grid" style="margin-top:22px;">
 
                     <div class="card">
-                        <div class="metric">0.656520</div>
+                        <div class="metric">0.662727</div>
                         <div class="metric-label">
                             Mean chronological ROC-AUC
                         </div>
                     </div>
 
                     <div class="card">
-                        <div class="metric">0.01255</div>
+                        <div class="metric">0.012436</div>
                         <div class="metric-label">
                             Fold ROC-AUC standard deviation
                         </div>
@@ -1165,59 +1165,35 @@
 
         <section id="model">
             <div class="container">
-
                 <div class="section-head">
                     <span class="section-num">06</span>
                     <h2>Final Model</h2>
                 </div>
-
                 <p class="section-intro">
-                    The selected prediction architecture is an ensemble of three
-                    shallow, regularized XGBoost models trained on the same 53-feature
-                    alert representation.
+                    The final prediction architecture is an equal-weight ensemble of five
+                    regularized LightGBM models trained on the same 53-feature alert
+                    representation with different random seeds.
                 </p>
-
                 <div class="grid">
-
                     <div class="card card--accent">
-                        <h3>Model A</h3>
-                        <div class="metric">50%</div>
-                        <p>
-                            Depth 3<br>
-                            Min child weight 10<br>
-                            L2 regularization 5
-                        </p>
+                        <h3>Ensemble</h3><div class="metric">5</div>
+                        <p>LightGBM models<br>Equal-weight averaging<br>Seeds: 17, 42, 73, 101, 2026</p>
                     </div>
-
                     <div class="card">
-                        <h3>Model B</h3>
-                        <div class="metric">25%</div>
-                        <p>
-                            Depth 3<br>
-                            Min child weight 20<br>
-                            L2 regularization 1
-                        </p>
+                        <h3>Tree Structure</h3><div class="metric">15</div>
+                        <p>Leaves<br>Min child samples: 120<br>Learning rate: 0.01</p>
                     </div>
-
                     <div class="card">
-                        <h3>Model C</h3>
-                        <div class="metric">25%</div>
-                        <p>
-                            Depth 3<br>
-                            Min child weight 5<br>
-                            L2 regularization 5
-                        </p>
+                        <h3>Regularization</h3><div class="metric">10</div>
+                        <p>L2 regularization<br>Subsample: 0.8<br>Column sample: 0.8</p>
                     </div>
-
                 </div>
-
                 <div class="note">
-                    Class weighting is calculated from the training data to account for
-                    the imbalanced escalation target. The final models are trained on
-                    all 14,000 training alerts after the architecture is selected using
-                    chronological validation.
+                    The number of boosting iterations for each seed is selected from the
+                    median best iteration across the chronological validation folds. The
+                    five final models are then trained on all 14,000 training alerts and
+                    their predicted probabilities are averaged equally.
                 </div>
-
             </div>
         </section>
 
