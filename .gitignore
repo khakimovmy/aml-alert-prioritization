@@ -30,3 +30,6 @@ main.py
 Thumbs.db
 
 team_5B7B633C_LOCKED_BACKUP.csv
+# Local model experiments
+notebooks/model_improvement.ipynb
+team_5B7B633C_LGB_CANDIDATE.csv
