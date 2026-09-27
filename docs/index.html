@@ -1140,7 +1140,8 @@
                 <div class="grid" style="margin-top:22px;">
 
                     <div class="card">
-                        <div class="metric">0.662727</div>
+                        <div class="metric"><!-- Final model metric: mean chronological development ROC-AUC; not hidden-test performance. -->
+0.667427</div>
                         <div class="metric-label">
                             Mean chronological ROC-AUC
                         </div>
@@ -1171,9 +1172,19 @@
                 </div>
                 <p class="section-intro">
                     The final prediction architecture is an equal-weight ensemble of five
-                    regularized LightGBM models trained on the same 53-feature alert
+                    regularized LightGBM models trained on the same 31-feature alert
                     representation with different random seeds.
                 </p>
+
+                <p>
+                    The final feature set contains 26 stable behavioural features
+                    plus five trailing 90-day transaction-amount statistics:
+                    mean, standard deviation, minimum, maximum, and median.
+                    These recent-window features are calculated only from
+                    leakage-safe transaction history available on or before
+                    each alert date.
+                </p>
+
                 <div class="grid">
                     <div class="card card--accent">
                         <h3>Ensemble</h3><div class="metric">5</div>

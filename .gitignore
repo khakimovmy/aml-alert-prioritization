@@ -33,3 +33,20 @@ team_5B7B633C_LOCKED_BACKUP.csv
 # Local model experiments
 notebooks/model_improvement.ipynb
 team_5B7B633C_LGB_CANDIDATE.csv
+
+# ------------------------------------------------------------
+# Local AML experiment / verification artifacts
+# ------------------------------------------------------------
+notebooks/02_signal_discovery.ipynb
+notebooks/model_improvement.ipynb
+notebooks/team_5B7B633C_before_final31_cleanup.ipynb
+
+team_5B7B633C_31FEATURE_CANDIDATE.csv
+team_5B7B633C_31FEATURE_REPRO.csv
+team_5B7B633C_53FEATURE_BACKUP.csv
+team_5B7B633C_STABLE26_BACKUP.csv
+team_5B7B633C_STABLE26_CANDIDATE.csv
+team_5B7B633C_STABLE26_CLEAN_REPRO.csv
+team_5B7B633C_LOCKED_BACKUP.csv
+
+docs/index_before_final31_update.html
